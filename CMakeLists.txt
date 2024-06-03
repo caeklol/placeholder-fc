@@ -7,8 +7,13 @@ project(placeholder-fc C CXX)
 # initialize the Raspberry Pi Pico SDK
 pico_sdk_init()
 
+file(GLOB code_SRC
+     "src/*.h"
+     "src/*.c"
+)
+
 add_executable(code
-    src/main.c
+	${code_SRC}
 )
 
 # Add pico_stdlib library which aggregates commonly used features
