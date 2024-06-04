@@ -120,6 +120,8 @@ void mpu6050_calibrate_gyro() {
 	MPU6050_BIAS[0] = gx / iters;
 	MPU6050_BIAS[1] = gy / iters;
 	MPU6050_BIAS[2] = gz / iters;
+
+	printf("mpu6050: gyro bias: x=%.6f, y=%.6f, z=%.6f\n", MPU6050_BIAS[0], MPU6050_BIAS[1], MPU6050_BIAS[2]);
 }
 
 void mpu6050_read_gyro(float gyro[3]) {

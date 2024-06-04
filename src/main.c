@@ -1,13 +1,17 @@
 #include <stdio.h>
-#include <string.h>
 #include "pico/stdlib.h"
-#include "hardware/i2c.h"
 
 #include "mpu6050.h"
+#include "motors.h"
+
 #include "util.h"
 
 int main() {
     stdio_init_all();
+
+	printf("overclocking...\n");
+	set_sys_clock_khz(250000, true);
+	printf("successfully overclocked!\n");
 
 	// blink for 3s
 	// this is not just for status and but also waiting for the IMU
@@ -15,13 +19,22 @@ int main() {
 
 	printf("hello, drone!\n");
 
-	int res;
 
-	res = mpu6050_init(12, 13, i2c_default);
-	if (res > 0) return 1;
+	Motor M1 = motor_init(2, 50);
+	printf("testing speed...\n");
 
-	printf("mpu6050 initialized!\n");
+	motor_speed(M1, 0);
+	sleep_ms(2000);
+	motor_speed(M1, 0.05);
 
-	mpu6050_calibrate_gyro();
-	printf("calculated mpu6050 bias\n");
+
+	//int res;
+
+	//res = mpu6050_init(12, 13, i2c_default);
+	//if (res > 0) return 1;
+
+	//printf("mpu6050 initialized!\n");
+
+	//mpu6050_calibrate_gyro();
+	//printf("calculated mpu6050 bias\n");
 }

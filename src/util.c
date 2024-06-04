@@ -1,5 +1,4 @@
 #include "stdio.h"
-
 #include "pico/stdlib.h"
 
 bool status_initialized = false;

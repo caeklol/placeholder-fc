@@ -17,7 +17,7 @@ add_executable(code
 )
 
 # Add pico_stdlib library which aggregates commonly used features
-target_link_libraries(code pico_stdlib hardware_i2c)
+target_link_libraries(code pico_stdlib hardware_i2c hardware_pwm)
 
 # enable usb output, disable uart output
 pico_enable_stdio_usb(code 1)
