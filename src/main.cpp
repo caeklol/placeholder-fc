@@ -17,8 +17,7 @@ int main() {
 
 	// blink for 3s
 	// this is not just for status and but also waiting for the IMU
-	//status_blink(0.8, 5);
-	sleep_ms(3000);
+	status_blink(0.8, 5);
 
 	printf("hello, drone!\n");
 
@@ -34,7 +33,7 @@ int main() {
 	while (1) {
 		int packetSize = LoRa.parsePacket();
 		if (packetSize > 0) {
-			printf("Received packet:\n");
+			printf("Recieved packet:\n");
 
 			char number[25] = "";
 			while (LoRa.available()) {
@@ -42,15 +41,18 @@ int main() {
 				strncat(number, &character, 1);
 			}
 
-			if (counter+1 == atoi(number)) {
+			int n = atoi(number);
+			if (counter+1 == n) {
 				status_set(false);
 				counter++;
 			} else {
+				counter = n;
 				status_set(true);
 			}
 
+			printf("%s\n", number);
 
-			printf("\n");
+
 			printf("EOF\n");
 		}
 	}
