@@ -2,22 +2,26 @@ cmake_minimum_required(VERSION 3.13)
 
 include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 
-project(placeholder-fc C CXX)
+project(placeholder-fc)
 
-# initialize the Raspberry Pi Pico SDK
+set(CMAKE_CXX_STANDARD 17)
+
+set(PICO_CXX_ENABLE_EXCEPTIONS 1)
+
 pico_sdk_init()
 
 file(GLOB code_SRC
      "src/*.h"
      "src/*.c"
+     "src/*.cpp"
+     "src/*.hpp"
 )
 
 add_executable(code
 	${code_SRC}
 )
 
-# Add pico_stdlib library which aggregates commonly used features
-target_link_libraries(code pico_stdlib hardware_i2c hardware_pwm)
+target_link_libraries(code pico_stdlib hardware_spi hardware_i2c hardware_pwm)
 
 # enable usb output, disable uart output
 pico_enable_stdio_usb(code 1)

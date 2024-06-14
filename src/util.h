@@ -1,4 +1,5 @@
-void status_set(bool state);
+void status_set();
+void status_set(int state);
 void status_blink(float speed, int blinks);
 int fatal_error(char* message);
 

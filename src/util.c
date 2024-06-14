@@ -1,3 +1,5 @@
+#include "util.h"
+
 #include "stdio.h"
 #include "pico/stdlib.h"
 
