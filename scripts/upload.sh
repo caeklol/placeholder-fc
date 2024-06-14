@@ -2,7 +2,14 @@ PICO_PATH=''
 FOUND_PICO=0
 
 find_pico() {
-	for disk in $(cat /proc/mounts | awk '{print $2}')
+
+	if [[ $OSTYPE == 'darwin'* ]]; then
+		disks=$(ls -1 /Volumes | awk '{print "/Volumes/"$1}')
+	else
+		disks=$(cat /proc/mounts | awk '{print $2}')
+	fi
+
+	for disk in $disks
 	do
 		info_uf2="$disk/INFO_UF2.TXT"
 		if [ -f $info_uf2 ]
