@@ -26,8 +26,9 @@
         buildInputs = with pkgs; [
           cmake
           gcc-arm-embedded
-          minicom
-          screen # serial
+          minicom # serial
+          screen
+	  python3 # required for cmake
         ];
 
         shellHook = ''
