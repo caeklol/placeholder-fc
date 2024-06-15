@@ -8,6 +8,23 @@
 
 #include "util.h"
 
+
+
+void parse_lora(uint8_t* packetCounter, uint16_t* joyX1, uint16_t* joyY1, uint16_t* joyX2, uint16_t* joyY2) {
+	while (LoRa.available()) {
+		*packetCounter = (uint8_t)LoRa.read();
+
+		uint16_t* values[4] = {joyX1, joyY1, joyX2, joyY2};
+
+		for (int i = 0; i < 4; i++) {
+			unsigned char a = LoRa.read();
+			unsigned char b = LoRa.read();
+			uint16_t result = (uint16_t)((a << 8) | b);
+			*values[i] = result;
+		}
+	}
+}
+
 int main() {
     stdio_init_all();
 
@@ -22,38 +39,29 @@ int main() {
 	printf("hello, drone!\n");
 
 	if (!LoRa.begin(432E6)) {
-		printf("Starting LoRa failed!\n");
-		while (1);
+		return fatal_error("lora failed to start!");
 	}
 
-	printf("LoRa Started\n");
+	printf("lora started\n");
 
 	int counter = 0;
+	uint16_t jx1 = 510;
+	uint16_t jy1 = 510;
+	uint16_t jx2 = 510;
+	uint16_t jy2 = 510;
 
 	while (1) {
 		int packetSize = LoRa.parsePacket();
 		if (packetSize > 0) {
-			printf("Recieved packet:\n");
+			counter++;
 
-			char number[25] = "";
-			while (LoRa.available()) {
-				char character = LoRa.read();
-				strncat(number, &character, 1);
+			uint8_t packetCounter;
+			parse_lora(&packetCounter, &jx1, &jy1, &jx2, &jy2);
+			printf("c: %d, pc: %d, jx1: %d, jy1: %d, jx2: %d, jy2: %d\n", counter, packetCounter, jx1, jy1, jx2, jy2);
+
+			if (counter != packetCounter) {
+				counter = packetCounter;
 			}
-
-			int n = atoi(number);
-			if (counter+1 == n) {
-				status_set(false);
-				counter++;
-			} else {
-				counter = n;
-				status_set(true);
-			}
-
-			printf("%s\n", number);
-
-
-			printf("EOF\n");
 		}
 	}
 
