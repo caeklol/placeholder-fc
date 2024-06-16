@@ -10,7 +10,7 @@ set(PICO_CXX_ENABLE_EXCEPTIONS 1)
 
 pico_sdk_init()
 
-file(GLOB code_SRC
+file(GLOB_RECURSE code_SRC
      "src/*.h"
      "src/*.c"
      "src/*.cpp"
