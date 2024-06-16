@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 
-#include "lora.hpp"
+#include "external/lora/lib.hpp"
 
 #include "mpu6050.h"
 #include "motors.h"
@@ -44,7 +44,7 @@ int main() {
 
 	printf("lora started\n");
 
-	int counter = 0;
+	uint8_t counter = 0;
 	uint16_t jx1 = 510;
 	uint16_t jy1 = 510;
 	uint16_t jx2 = 510;

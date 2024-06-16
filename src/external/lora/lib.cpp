@@ -1,4 +1,4 @@
-#include "lora.hpp"
+#include "lib.hpp"
 
 // registers
 #define REG_FIFO                 0x00
