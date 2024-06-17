@@ -1,3 +1,5 @@
+#include "mpu6050.h"
+
 #include "stdio.h"
 
 #include "pico/stdlib.h"

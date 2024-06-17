@@ -1,6 +1,5 @@
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 #include "hardware/i2c.h"
@@ -13,5 +12,3 @@ bool mpu6050_initialized();
 #ifdef __cplusplus
 }
 #endif
-
-

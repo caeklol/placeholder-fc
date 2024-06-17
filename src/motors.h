@@ -1,6 +1,5 @@
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 #include "pico/stdlib.h"
@@ -13,5 +12,3 @@ void motor_speed(Motor m, float speed);
 #ifdef __cplusplus
 }
 #endif
-
-
