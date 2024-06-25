@@ -29,10 +29,11 @@ void status_blink(float speed, int blinks) {
 	}
 }
 
-int fatal_error(char* message) {
+int fatal_error(const char* message) {
 	printf("FATAL ERROR: ");
 	printf(message);
 	printf("\n");
 	status_blink(1, 10);
 	return -1;
 }
+

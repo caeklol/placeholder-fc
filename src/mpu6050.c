@@ -87,7 +87,14 @@ void mpu6050_read_gyro_raw(int16_t gyro[3]) {
 	i2c_read_blocking(MPU6050_BUS, MPU6050_ADDR, buf, 6, false);
 
 	for (int i = 0; i < 3; i++) {
-        gyro[i] = (buf[i * 2] << 8 | buf[(i * 2) + 1]);;
+		uint8_t high = buf[i];
+		uint8_t low = buf[i+1];
+		int16_t value = (high << 8) + low;
+		if (value >= 0x8000) {
+			value = -((65535 - value) + 1);
+		}
+
+        gyro[i] = value;
     }
 }
 
@@ -129,7 +136,13 @@ void mpu6050_read_gyro(float gyro[3]) {
 	int16_t tmp[3];
 	mpu6050_read_gyro_raw(tmp);
 
-	gyro[0] = (float)(tmp[0] / 65.5F) - MPU6050_BIAS[0];
-	gyro[1] = (float)(tmp[1] / 65.5F) - MPU6050_BIAS[1];
-	gyro[2] = (float)(tmp[2] / 65.5F) - MPU6050_BIAS[2];
+	gyro[0] = (float)(tmp[0] / 65.5F);
+	gyro[1] = (float)(tmp[1] / 65.5F);
+	gyro[2] = (float)(tmp[2] / 65.5F);
+}
+
+void mpu6050_correct_bias(float gyro[3]) {
+	gyro[0] -= MPU6050_BIAS[0];
+	gyro[1] -= MPU6050_BIAS[1];
+	gyro[2] -= MPU6050_BIAS[2];
 }
