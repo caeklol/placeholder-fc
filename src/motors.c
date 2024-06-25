@@ -1,8 +1,12 @@
-#include "motors.h"
-
 #include <stdlib.h>
+
 #include "pico/stdlib.h"
 #include "hardware/pwm.h"
+
+#include "motors.h"
+#include "util.h"
+
+
 
 struct motor {
 	uint slice;
@@ -48,7 +52,8 @@ Motor motor_init(uint pin, uint16_t freq) {
 }
 
 void motor_speed(Motor m, float speed) {
-	float duty_cycle = (speed/4) + 0.25;
+	float duty_cycle = (min(max(speed, 0.03), 1)/4) + 0.25;
+
 	pwm_set_chan_level(m->slice, m->chan, m->wrap * duty_cycle);
   	if (!m->enabled) pwm_set_enabled(m->slice, 1);
 }

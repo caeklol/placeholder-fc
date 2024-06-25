@@ -9,7 +9,7 @@
 #include "util.h"
 
 float throttle_idle = 0.12;
-float throttle_governor = 0.4;
+float throttle_governor = 0.5;
 
 float max_rate_roll = 30.0;
 float max_rate_pitch = 30.0;
@@ -18,13 +18,13 @@ float max_rate_yaw = 50.0;
 float cycle_hz = 250;
 
 const float pid_roll_kp = 0;
-const float pid_roll_ki = 1;
+const float pid_roll_ki = 0.025;
 const float pid_roll_kd = 0;
 const float pid_pitch_kp = pid_roll_kp;
 const float pid_pitch_ki = pid_roll_ki;
 const float pid_pitch_kd = pid_roll_kd;
 const float pid_yaw_kp = 0;
-const float pid_yaw_ki = 1;
+const float pid_yaw_ki = 0.025;
 const float pid_yaw_kd = 0;
 
 int main() {
@@ -40,13 +40,13 @@ int main() {
 
 	printf("hello, drone!\n");
 
-	// accel init
+	// gyro init
 	int res;
 
 	res = mpu6050_init(12, 13, i2c_default);
 	if (res > 0) return 1;
 	mpu6050_calibrate_gyro();
-	printf("accelerometer initialized\n");
+	printf("gyro initialized\n");
 
 	// controller init
 	res = controller_init(432E6);
@@ -140,27 +140,32 @@ int main() {
 
 			float adj_throttle = throttle_idle + (throttle_range * throttle);
 
-			// black magic PID code
+			// proportional
 			float error_rate_roll = (roll * max_rate_roll) - gyro[0];
-			float error_rate_pitch = (roll * max_rate_roll) - gyro[1];
-			float error_rate_yaw = (roll * max_rate_roll) - gyro[2];
+			float error_rate_pitch = (pitch * max_rate_pitch) - gyro[1];
+			float error_rate_yaw = (yaw * max_rate_yaw) - gyro[2];
 
 			float roll_p = error_rate_roll * pid_roll_kp;
+			float pitch_p = error_rate_pitch * pid_pitch_kp;
+			float yaw_p = error_rate_yaw * pid_yaw_kp;
+
+			// integral
 			float roll_i = roll_last_integral + (error_rate_roll * pid_roll_ki * cycle_time_seconds);
 			roll_i = max(min(roll_i, i_limit), -i_limit);
-			float roll_d = pid_roll_kd * (error_rate_roll - roll_last_error) / cycle_time_seconds;
-			float pid_roll = roll_p + roll_i + roll_d;
 
-			float pitch_p = error_rate_pitch * pid_pitch_kp;
             float pitch_i = pitch_last_integral + (error_rate_pitch * pid_pitch_ki * cycle_time_seconds);
 			pitch_i = max(min(pitch_i, i_limit), -i_limit);
-			float pitch_d = pid_pitch_kd * (error_rate_pitch - pitch_last_error) / cycle_time_seconds;
-			float pid_pitch = pitch_p + pitch_i + pitch_d;
 
-			float yaw_p = error_rate_yaw * pid_yaw_kp;
 			float yaw_i = yaw_last_integral + (error_rate_yaw * pid_yaw_ki * cycle_time_seconds);
 			yaw_i = max(min(yaw_i, i_limit), -i_limit);
+	
+			// derivative
+			float roll_d = pid_roll_kd * (error_rate_roll - roll_last_error) / cycle_time_seconds;
+			float pitch_d = pid_pitch_kd * (error_rate_pitch - pitch_last_error) / cycle_time_seconds;
 			float yaw_d = pid_yaw_kd * (error_rate_yaw - yaw_last_error) / cycle_time_seconds;
+
+			float pid_roll = roll_p + roll_i + roll_d;
+			float pid_pitch = pitch_p + pitch_i + pitch_d;
 			float pid_yaw = yaw_p + yaw_i + yaw_d;
 
 			float t1 = adj_throttle + pid_pitch + pid_roll - pid_yaw;
@@ -180,9 +185,9 @@ int main() {
 			pitch_last_integral = pitch_i;
 			yaw_last_integral = yaw_i;
 
-			printf("throttle: %.6f, yaw: %.6f, pitch: %.6f, roll: %.6f\n", throttle, yaw, pitch, roll);
+			//printf("throttle: %.6f, yaw: %.6f, pitch: %.6f, roll: %.6f\n", throttle, yaw, pitch, roll);
+			printf("re: %.6f, pe: %.6f, ye: %.6f, ri: %.6f, pi: %.6f, yi: %.6f\n", roll_last_error,  pitch_last_error, yaw_last_error, roll_last_integral, pitch_last_integral, yaw_last_integral);
 			printf("gyro_x: %.6f, gyro_y: %.6f, gyro_z: %.6f\n", gyro[0], gyro[1], gyro[2]);
-
 			printf("t1: %.6f, t2: %.6f, t3: %.6f, t4: %.6f\n", t1, t2, t3, t4);
 
 			last_mode = 0;

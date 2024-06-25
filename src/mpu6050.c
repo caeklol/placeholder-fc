@@ -87,27 +87,18 @@ void mpu6050_read_gyro_raw(int16_t gyro[3]) {
 	i2c_read_blocking(MPU6050_BUS, MPU6050_ADDR, buf, 6, false);
 
 	for (int i = 0; i < 3; i++) {
-		uint8_t high = buf[i];
-		uint8_t low = buf[i+1];
-		int16_t value = (high << 8) + low;
-		if (value >= 0x8000) {
-			value = -((65535 - value) + 1);
-		}
-
-        gyro[i] = value;
+        gyro[i] = (buf[i * 2] << 8 | buf[(i * 2) + 1]);;
     }
 }
 
 void mpu6050_calibrate_gyro() {
 	/// taken from scout
-	int32_t raw_gx = 0;
-	int32_t raw_gy = 0;
-	int32_t raw_gz = 0;
-	int iters = 0;
+	int64_t raw_gx = 0;
+	int64_t raw_gy = 0;
+	int64_t raw_gz = 0;
+	int iters = 700;
 
-	clock_t t = clock();
-
-	while (((double)(clock()-t))/CLOCKS_PER_SEC < 3) {
+	for (int i = 0; i < iters; i++) {
 		int16_t	buf[3];
 
 		mpu6050_read_gyro_raw(buf);
@@ -116,14 +107,12 @@ void mpu6050_calibrate_gyro() {
 		raw_gy += buf[1];
 		raw_gz += buf[2];
 
-		iters++;
-
-		sleep_ms(26);
+		sleep_ms(10);
 	}
 
-	float gx = raw_gx / 65.5F;
-	float gy = raw_gy / 65.5F;
-	float gz = raw_gz / 65.5F;
+	float gx = (float) raw_gx / 65.5F;
+	float gy = (float) raw_gy / 65.5F;
+	float gz = (float) raw_gz / 65.5F;
 
 	MPU6050_BIAS[0] = gx / iters;
 	MPU6050_BIAS[1] = gy / iters;
