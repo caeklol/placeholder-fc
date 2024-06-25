@@ -1,2 +1,2 @@
 ./scripts/build.sh
-./scripts/upload.sh
+sudo ./scripts/upload.sh

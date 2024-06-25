@@ -1,7 +1,12 @@
 PICO_PATH=''
 FOUND_PICO=0
 
+build_bootsel() {
+	cc scripts/bootsel.c -o scripts/bootsel $(pkg-config --cflags --libs libusb-1.0)
+}
+
 find_pico() {
+	scripts/bootsel
 
 	if [[ $OSTYPE == 'darwin'* ]]; then
 		disks=$(ls -1 /Volumes | awk '{print "/Volumes/"$1}')
@@ -24,6 +29,10 @@ find_pico() {
 if [ ! -f build/code.uf2 ]; then
 	echo "Could not find UF2 file! Have you run ./build.sh?"
 	exit 1
+fi
+
+if [ ! -f scripts/bootsel ]; then
+	 build_bootsel
 fi
 
 echo "Waiting for Pico..."

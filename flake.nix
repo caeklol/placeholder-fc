@@ -28,7 +28,9 @@
           gcc-arm-embedded
           minicom # serial
           screen
-	  python3 # required for cmake
+		  python3 # required for cmake
+		  libusb1 # bootsel
+		  pkg-config
         ];
 
         shellHook = ''
