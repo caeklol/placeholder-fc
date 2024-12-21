@@ -26,7 +26,7 @@
         buildInputs = with pkgs; [
           cmake
           gcc-arm-embedded
-          minicom # serial
+          picocom # serial
           screen
 		  python3 # required for cmake
 		  libusb1 # bootsel
