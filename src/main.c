@@ -8,7 +8,7 @@
 
 #include "util.h"
 
-float throttle_idle = 0.12;
+float throttle_idle = 0.04;
 float throttle_governor = 0.5;
 
 float max_rate_roll = 30.0;
@@ -17,14 +17,14 @@ float max_rate_yaw = 50.0;
 
 float cycle_hz = 250;
 
-const float pid_roll_kp = 0;
-const float pid_roll_ki = 0.025;
+const float pid_roll_kp = 0.025;
+const float pid_roll_ki = 0;
 const float pid_roll_kd = 0;
 const float pid_pitch_kp = pid_roll_kp;
 const float pid_pitch_ki = pid_roll_ki;
 const float pid_pitch_kd = pid_roll_kd;
-const float pid_yaw_kp = 0;
-const float pid_yaw_ki = 0.025;
+const float pid_yaw_kp = 0.025;
+const float pid_yaw_ki = 0;
 const float pid_yaw_kd = 0;
 
 int main() {
