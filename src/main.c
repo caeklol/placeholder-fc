@@ -62,10 +62,10 @@ int main() {
 	Motor M3 = motor_init(15, 250);
 	Motor M4 = motor_init(16, 250);
 
-	motor_ns(M1, 0);
-	motor_ns(M2, 0);
-	motor_ns(M3, 0);
-	motor_ns(M4, 0);
+	motor_ns(M1, 1000000);
+	motor_ns(M2, 1000000);
+	motor_ns(M3, 1000000);
+	motor_ns(M4, 1000000);
 	printf("motors initialized!\n");
 	sleep_ms(2000);
 	
@@ -112,10 +112,10 @@ int main() {
 		controller_accept_packet(&mode, &jx1, &jy1, &jx2, &jy2);
 	
 		if (mode == 1) {
-			motor_ns(M1, 0);
-			motor_ns(M2, 0);
-			motor_ns(M3, 0);
-			motor_ns(M4, 0);
+			motor_ns(M1, 1100000);
+			motor_ns(M2, 1000000);
+			motor_ns(M3, 1000000);
+			motor_ns(M4, 1000000);
 
 			yaw_last_error = 0;
 			yaw_last_integral = 0;
@@ -128,8 +128,6 @@ int main() {
 
 			printf("standby mode! shutting motors off\n");
 		} else if (mode == 0) {
-			gyro[0] *= -1;
-			
 			float throttle = map(jx1, 0, 1023, 0, 1);
 			float pitch = map(jx2, 0, 1023, -1, 1) * -1;
 			float yaw = map(jy1, 0, 1023, -1, 1);
@@ -141,9 +139,7 @@ int main() {
 				}
 			}
 
-			float adj_throttle = throttle_idle + (throttle_range * throttle);
 			printf("gyro_x: %.6f, gyro_y: %.6f, gyro_z: %.6f\n", gyro[0], gyro[1], gyro[2]);
-			printf("t1: %.6f, t2: %.6f, t3: %.6f, t4: %.6f\n", t1, t2, t3, t4);
 
 			last_mode = 0;
 		}
