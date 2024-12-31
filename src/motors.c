@@ -6,12 +6,11 @@
 #include "motors.h"
 #include "util.h"
 
-
-
 struct motor {
 	uint slice;
 	uint chan;
 	uint32_t wrap;
+	uint16_t freq;
 	bool enabled;
 };
 
@@ -47,13 +46,16 @@ Motor motor_init(uint pin, uint16_t freq) {
 	m->chan = pin%2;
 	m->wrap = wrap;
 	m->enabled = false;
+	m->freq = freq;
 
 	return m;
 }
 
-void motor_speed(Motor m, float speed) {
-	float duty_cycle = (min(max(speed, 0.03), 1)/4) + 0.25;
-
-	pwm_set_chan_level(m->slice, m->chan, m->wrap * duty_cycle);
+void motor_ns(Motor m, uint32_t duty_ns) {
+	float duty_cycle = ((float)duty_ns / (float)m->freq) * 100.0; // according to scout, this is in range (0, 50) aka (1m, 2m at 250hz (4m period))
+	
+	// todo: optimizeable perhapss
+	// im targeting the completion of this project before the most optimal sol so idk if this is the best
+	pwm_set_chan_level(m->slice, m->chan, m->wrap * (int)duty_cycle / 100);
   	if (!m->enabled) pwm_set_enabled(m->slice, 1);
 }
