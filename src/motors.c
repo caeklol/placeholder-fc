@@ -10,7 +10,7 @@ struct motor {
 	uint slice;
 	uint chan;
 	uint32_t wrap;
-	uint16_t freq;
+	uint32_t period;
 	bool enabled;
 };
 
@@ -46,13 +46,13 @@ Motor motor_init(uint pin, uint16_t freq) {
 	m->chan = pin%2;
 	m->wrap = wrap;
 	m->enabled = false;
-	m->freq = freq;
+	m->period = (1 / freq) * 10e9; // hz -> ns
 
 	return m;
 }
 
 void motor_ns(Motor m, uint32_t duty_ns) {
-	float duty_cycle = ((float)duty_ns / (float)m->freq) * 100.0; // according to scout, this is in range (0, 50) aka (1m, 2m at 250hz (4m period))
+	float duty_cycle = ((float)duty_ns / (float)m->period) * 100.0; // according to scout, this is in range (0, 50) aka (1m, 2m at 250hz (4m period))
 	
 	// todo: optimizeable perhapss
 	// im targeting the completion of this project before the most optimal sol so idk if this is the best
